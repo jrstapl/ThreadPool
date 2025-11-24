@@ -1,6 +1,6 @@
-#include <stdlib.h>
-
 #include "threadpool.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 int main() {
 
@@ -13,7 +13,7 @@ int main() {
     threadpool_add_task(&pool, example_task, task_num);
   }
 
-  sleep(30);
+  sleep(20);
   threadpool_destroy(&pool);
 
   return 0;

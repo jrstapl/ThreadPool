@@ -18,7 +18,7 @@ void *thread_function(void *threadpool) {
   while (1) {
     pthread_mutex_lock(&(pool->lock));
 
-    while (pool->queue_size == 0 && !pool->stop) {
+    while (pool->queued == 0 && !pool->stop) {
       pthread_cond_wait(&(pool->notify), &(pool->lock));
     }
 
@@ -32,7 +32,7 @@ void *thread_function(void *threadpool) {
     pool->queued--;
 
     pthread_mutex_unlock(&(pool->lock));
-    (*(task.function))(task.arg);
+    (*(task.fn))(task.arg);
   }
 
   return NULL;
@@ -54,7 +54,6 @@ void threadpool_destroy(threadpool_t *pool) {
   pool->stop = 1;
   pthread_cond_broadcast(&(pool->notify));
   pthread_mutex_unlock(&(pool->lock));
-  threadpool_zero(pool);
 
   for (int i = 0; i < THREADS; i++) {
     pthread_join(pool->threads[i], NULL);
@@ -76,7 +75,7 @@ void threadpool_add_task(threadpool_t *pool, void (*function)(void *),
     pool->queued++;
     pthread_cond_signal(&(pool->notify));
   } else {
-    printf("Queue full, please wait and retry.")
+    printf("Queue full, please wait and retry.");
   }
 
   pthread_mutex_unlock(&(pool->lock));
