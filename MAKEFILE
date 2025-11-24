@@ -1,0 +1,13 @@
+CC=gcc
+CFLAGS=-I./inc/
+DEPS = threadpool.h
+OBJ = main.o threadpool.o
+
+%.o: %.c $(DEPS)
+        $(CC) -c -o $@ $< $(CFLAGS)
+
+run: $(OBJ)
+    &(CC) -o $@ $^ $(CFLAGS) 
+
+clean:
+    rm -f build/*
